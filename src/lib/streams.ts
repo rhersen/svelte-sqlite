@@ -1,15 +1,7 @@
 import { EventSource } from 'eventsource';
-// import { saveAnnouncement, savePosition } from "./db.ts";
+import { saveAnnouncement, savePosition } from './db.ts';
 import { buildAnnouncementQuery, buildPositionQuery, fetchTrafikverket } from './trafikverket.ts';
-import type { TrafikverketResultItem, PositionRecord, AnnouncementRecord } from './types.ts';
-
-function savePosition(position: PositionRecord): void {
-	console.log('Saving position:', position);
-}
-
-function saveAnnouncement(announcement: AnnouncementRecord): void {
-	console.log('Saving announcement:', announcement);
-}
+import type { TrafikverketResultItem } from './types.ts';
 
 export async function connectPosition(): Promise<void> {
 	try {

@@ -1,5 +1,5 @@
-import { DatabaseSync } from 'node:sqlite';
 import type { Handle } from '@sveltejs/kit';
+import * as db from '$lib/db';
 import * as streams from '$lib/streams';
 
 console.log('Server is starting...');
@@ -7,9 +7,7 @@ console.log('Server is starting...');
 // Initialize database, load config, etc.
 const initializeApp = async () => {
 	console.log('Initializing app...');
-	const db = new DatabaseSync('app-database.db');
-	console.log('Database connected:', db.isOpen);
-	// Load environment variables
+	db.initialize();
 	// Start background jobs
 	streams.connectPosition();
 	streams.connectAnnouncement();
