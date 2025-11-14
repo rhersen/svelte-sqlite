@@ -147,7 +147,7 @@ export function saveAnnouncement(announcement: AnnouncementRecord): void {
 	);
 }
 
-export function getRecentPositions(
+export function getPositionsByTrainNumber(
 	trainNumber: string,
 	hoursBack: number = 1
 ): Record<string, unknown>[] {
@@ -163,7 +163,7 @@ export function getRecentPositions(
 		.all(trainNumber, cutoff) as Record<string, unknown>[];
 }
 
-export function getRecentAnnouncements(
+export function getAnnouncementsByTrainIdent(
 	trainIdent: string,
 	hoursBack: number = 1
 ): Record<string, unknown>[] {
@@ -177,6 +177,20 @@ export function getRecentAnnouncements(
     `
 		)
 		.all(trainIdent, cutoff) as Record<string, unknown>[];
+}
+
+export function getPositionsByLimit(limit: number = 100): Record<string, unknown>[] {
+	const safeLimit = Math.min(limit, 1000);
+	return db
+		.prepare('SELECT * FROM positions ORDER BY created_at DESC LIMIT ?')
+		.all(safeLimit) as Record<string, unknown>[];
+}
+
+export function getAnnouncementsByLimit(limit: number = 100): Record<string, unknown>[] {
+	const safeLimit = Math.min(limit, 1000);
+	return db
+		.prepare('SELECT * FROM announcements ORDER BY created_at DESC LIMIT ?')
+		.all(safeLimit) as Record<string, unknown>[];
 }
 
 export function cleanup(hoursToKeep: number = 20): {
