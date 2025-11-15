@@ -1,5 +1,5 @@
 import { DatabaseSync } from 'node:sqlite';
-import type { PositionRecord, AnnouncementRecord } from './types.ts';
+import type { PositionRecord, AnnouncementRecord, DatabaseStats } from './types.ts';
 
 const db = new DatabaseSync('app-database.db');
 
@@ -208,12 +208,7 @@ export function cleanup(hoursToKeep: number = 20): {
 	};
 }
 
-export function getStats(): {
-	positions: number;
-	announcements: number;
-	lastPosition: string | null;
-	lastAnnouncement: string | null;
-} {
+export function getStats(): DatabaseStats {
 	const pos = (
 		db.prepare(`SELECT COUNT(*) as count FROM positions`).get() as {
 			count: number;
@@ -233,7 +228,7 @@ export function getStats(): {
 	return {
 		positions: pos,
 		announcements: ann,
-		lastPosition: lastPos?.timestamp || null,
-		lastAnnouncement: lastAnn?.timestamp || null
+		lastPosition: lastPos?.timestamp,
+		lastAnnouncement: lastAnn?.timestamp
 	};
 }

@@ -58,3 +58,10 @@ export interface TrafikverketResponseData {
 export interface TrafikverketResponse {
 	RESPONSE: TrafikverketResponseData;
 }
+
+export interface DatabaseStats {
+	positions: number;
+	announcements: number;
+	lastPosition?: string;
+	lastAnnouncement?: string;
+}
