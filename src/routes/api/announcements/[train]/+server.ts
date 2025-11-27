@@ -3,7 +3,7 @@ import { getAnnouncementsByTrainIdent } from '$lib/db';
 
 export const GET = async ({ params, url }) => {
 	try {
-		const trainIdent = params.trainIdent;
+		const trainIdent = params.train;
 		const hoursParam = url.searchParams.get('hours');
 		const hours = hoursParam ? parseInt(hoursParam) : 1;
 
