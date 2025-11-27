@@ -16,6 +16,19 @@ const initializeApp = async () => {
 
 await initializeApp();
 
+// Handle graceful shutdown
+process.on('SIGTERM', () => {
+	console.log('SIGTERM received, closing streams...');
+	streams.disconnectAll();
+	process.exit(0);
+});
+
+process.on('SIGINT', () => {
+	console.log('SIGINT received, closing streams...');
+	streams.disconnectAll();
+	process.exit(0);
+});
+
 // This runs on every request
 export const handle: Handle = async ({ event, resolve }) => {
 	// Middleware code here (optional)
