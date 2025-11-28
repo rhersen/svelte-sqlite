@@ -5,7 +5,7 @@ export const GET = async ({ params, url }) => {
 	try {
 		const trainNumber = params.train;
 		const hoursParam = url.searchParams.get('hours');
-		const hours = hoursParam ? parseInt(hoursParam) : 1;
+		const hours = hoursParam ? parseInt(hoursParam) : 20;
 
 		if (!trainNumber) {
 			return json({ error: 'Train number is required' }, { status: 400 });
