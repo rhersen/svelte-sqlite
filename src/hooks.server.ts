@@ -19,8 +19,8 @@ const initializeApp = async () => {
 await initializeApp();
 
 // Handle graceful shutdown
-process.on('SIGTERM', () => {
-	console.log('SIGTERM received, closing streams and cleanup job...');
+process.on('SIGHUP', () => {
+	console.log('SIGHUP received, closing streams and cleanup job...');
 	cleanup.stopJob();
 	streams.disconnectAll();
 	process.exit(0);
