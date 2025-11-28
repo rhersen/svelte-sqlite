@@ -149,7 +149,7 @@ export function saveAnnouncement(announcement: AnnouncementRecord): void {
 
 export function getPositionsByTrainNumber(
 	trainNumber: string,
-	hoursBack: number = 1
+	hoursBack: number = 20
 ): Record<string, unknown>[] {
 	const cutoff = Date.now() - hoursBack * 60 * 60 * 1000;
 	return db
@@ -165,7 +165,7 @@ export function getPositionsByTrainNumber(
 
 export function getAnnouncementsByTrainIdent(
 	trainIdent: string,
-	hoursBack: number = 1
+	hoursBack: number = 20
 ): Record<string, unknown>[] {
 	const cutoff = Date.now() - hoursBack * 60 * 60 * 1000;
 	return db
