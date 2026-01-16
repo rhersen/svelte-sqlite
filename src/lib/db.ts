@@ -1,5 +1,5 @@
 import { DatabaseSync } from 'node:sqlite';
-import type { PositionRecord, AnnouncementRecord, DatabaseStats } from './types.ts';
+import type { PositionRecord, DatabaseStats } from './types.ts';
 
 const db = new DatabaseSync('app-database.db');
 
@@ -31,34 +31,6 @@ export function initialize(): void {
 	db.exec(`
     CREATE INDEX IF NOT EXISTS idx_positions_date
     ON positions(created_at DESC)
-  `);
-
-	db.exec(`
-    CREATE TABLE IF NOT EXISTS announcements (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      activity_type TEXT,
-      advertised_time_at_location TEXT,
-      advertised_train_ident TEXT,
-      from_location_name TEXT,
-      from_location_priority INTEGER,
-      to_location_name TEXT,
-      to_location_priority INTEGER,
-      location_signature TEXT,
-      product_code TEXT,
-      product_description TEXT,
-      time_at_location_with_seconds TEXT,
-      created_at INTEGER NOT NULL
-    )
-  `);
-
-	db.exec(`
-    CREATE INDEX IF NOT EXISTS idx_announcements_train
-    ON announcements(advertised_train_ident, created_at DESC)
-  `);
-
-	db.exec(`
-    CREATE INDEX IF NOT EXISTS idx_announcements_date
-    ON announcements(created_at DESC)
   `);
 }
 
@@ -108,45 +80,6 @@ export function savePosition(position: PositionRecord): void {
 	);
 }
 
-export function saveAnnouncement(announcement: AnnouncementRecord): void {
-	const fromLoc = announcement.FromLocation[0];
-	const toLoc = announcement.ToLocation[0];
-	const productInfo = announcement.ProductInformation[0];
-	const now = Date.now();
-
-	db.prepare(
-		`
-    INSERT INTO announcements (
-      activity_type,
-      advertised_time_at_location,
-      advertised_train_ident,
-      from_location_name,
-      from_location_priority,
-      to_location_name,
-      to_location_priority,
-      location_signature,
-      product_code,
-      product_description,
-      time_at_location_with_seconds,
-      created_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `
-	).run(
-		announcement.ActivityType || null,
-		announcement.AdvertisedTimeAtLocation || null,
-		announcement.AdvertisedTrainIdent || null,
-		fromLoc?.LocationName || null,
-		fromLoc?.Priority || null,
-		toLoc?.LocationName || null,
-		toLoc?.Priority || null,
-		announcement.LocationSignature || null,
-		productInfo?.Code || null,
-		productInfo?.Description || null,
-		announcement.TimeAtLocationWithSeconds || null,
-		now
-	);
-}
-
 export function getPositionsByTrainNumber(
 	trainNumber: string,
 	hoursBack: number = 20
@@ -163,22 +96,6 @@ export function getPositionsByTrainNumber(
 		.all(trainNumber, cutoff) as Record<string, unknown>[];
 }
 
-export function getAnnouncementsByTrainIdent(
-	trainIdent: string,
-	hoursBack: number = 20
-): Record<string, unknown>[] {
-	const cutoff = Date.now() - hoursBack * 60 * 60 * 1000;
-	return db
-		.prepare(
-			`
-      SELECT * FROM announcements
-      WHERE advertised_train_ident = ? AND created_at > ?
-      ORDER BY created_at DESC
-    `
-		)
-		.all(trainIdent, cutoff) as Record<string, unknown>[];
-}
-
 export function getPositionsByLimit(limit: number = 100): Record<string, unknown>[] {
 	const safeLimit = Math.min(limit, 1000);
 	return db
@@ -186,26 +103,12 @@ export function getPositionsByLimit(limit: number = 100): Record<string, unknown
 		.all(safeLimit) as Record<string, unknown>[];
 }
 
-export function getAnnouncementsByLimit(limit: number = 100): Record<string, unknown>[] {
-	const safeLimit = Math.min(limit, 1000);
-	return db
-		.prepare('SELECT * FROM announcements ORDER BY created_at DESC LIMIT ?')
-		.all(safeLimit) as Record<string, unknown>[];
-}
-
-export function cleanup(hoursToKeep: number = 20): {
-	positions: number;
-	announcements: number;
-} {
+export function cleanup(hoursToKeep: number = 20): number {
 	const cutoff = Date.now() - hoursToKeep * 60 * 60 * 1000;
 
 	const posChanges = db.prepare(`DELETE FROM positions WHERE created_at < ?`).run(cutoff);
-	const annChanges = db.prepare(`DELETE FROM announcements WHERE created_at < ?`).run(cutoff);
 
-	return {
-		positions: typeof posChanges === 'number' ? posChanges : 0,
-		announcements: typeof annChanges === 'number' ? annChanges : 0
-	};
+	return typeof posChanges === 'number' ? posChanges : 0;
 }
 
 export function getStats(): DatabaseStats {
@@ -214,21 +117,11 @@ export function getStats(): DatabaseStats {
 			count: number;
 		}
 	).count;
-	const ann = (
-		db.prepare(`SELECT COUNT(*) as count FROM announcements`).get() as {
-			count: number;
-		}
-	).count;
 	const lastPos = db.prepare(`SELECT MAX(timestamp) as timestamp FROM positions`).get() as
 		| { timestamp: string }
 		| undefined;
-	const lastAnn = db
-		.prepare(`SELECT MAX(time_at_location_with_seconds) as timestamp FROM announcements`)
-		.get() as { timestamp: string } | undefined;
 	return {
 		positions: pos,
-		announcements: ann,
-		lastPosition: lastPos?.timestamp,
-		lastAnnouncement: lastAnn?.timestamp
+		lastPosition: lastPos?.timestamp
 	};
 }

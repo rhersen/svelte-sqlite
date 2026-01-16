@@ -32,29 +32,6 @@ export function buildPositionQuery(): string {
 </REQUEST>`;
 }
 
-export function buildAnnouncementQuery(): string {
-	const since = new Date(Date.now() - 8 * minutes).toISOString();
-	return `
-<REQUEST>
-  <LOGIN authenticationkey='${TRAFIKVERKET_API_KEY}' />
-  <QUERY objecttype='TrainAnnouncement' orderby='AdvertisedTimeAtLocation' sseurl='true' schemaversion='1.6'>
-    <FILTER>
-      <LIKE name='AdvertisedTrainIdent' value='/^(?:2[2-9]\\d\\d|12[89]\\d\\d|52[2-7]\\d\\d)$/' />
-      <GT name='TimeAtLocationWithSeconds' value='${since}' />
-      <EXISTS name='ToLocation' value='true' />
-    </FILTER>
-    <INCLUDE>ActivityType</INCLUDE>
-    <INCLUDE>AdvertisedTimeAtLocation</INCLUDE>
-    <INCLUDE>AdvertisedTrainIdent</INCLUDE>
-    <INCLUDE>FromLocation</INCLUDE>
-    <INCLUDE>LocationSignature</INCLUDE>
-    <INCLUDE>ProductInformation</INCLUDE>
-    <INCLUDE>TimeAtLocationWithSeconds</INCLUDE>
-    <INCLUDE>ToLocation</INCLUDE>
-  </QUERY>
-</REQUEST>`;
-}
-
 export async function fetchTrafikverket(body: string): Promise<TrafikverketResponse> {
 	const response = await fetch('https://api.trafikinfo.trafikverket.se/v2/data.json', {
 		method: 'POST',

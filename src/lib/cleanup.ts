@@ -6,10 +6,8 @@ export function startJob(intervalMs: number = 60 * 60 * 1000): void {
 	// Run cleanup every hour (3600000 ms) by default
 	cleanupInterval = setInterval(() => {
 		try {
-			const result = db.cleanup();
-			console.log(
-				`Database cleanup completed: ${result.positions} positions and ${result.announcements} announcements deleted.`
-			);
+			const deletedCount = db.cleanup();
+			console.log(`Database cleanup completed: ${deletedCount} positions deleted.`);
 		} catch (error) {
 			console.error('Error during database cleanup:', error);
 		}

@@ -11,17 +11,6 @@ export interface Position {
 	WGS84?: string; // WKT format: "POINT (lon lat)"
 }
 
-export interface LocationData {
-	LocationName?: string;
-	Priority?: number;
-	Order?: number;
-}
-
-export interface ProductInfo {
-	Code?: string;
-	Description?: string;
-}
-
 export interface PositionRecord {
 	Train: Train;
 	Position: Position;
@@ -30,24 +19,12 @@ export interface PositionRecord {
 	Speed?: number;
 }
 
-export interface AnnouncementRecord {
-	ActivityType: string;
-	AdvertisedTimeAtLocation: string;
-	AdvertisedTrainIdent: string;
-	FromLocation: LocationData[];
-	ToLocation: LocationData[];
-	LocationSignature: string;
-	ProductInformation: ProductInfo[];
-	TimeAtLocationWithSeconds: string;
-}
-
 export interface TrafikverketInfo {
 	SSEURL: string;
 }
 
 export interface TrafikverketResultItem {
 	TrainPosition?: PositionRecord[];
-	TrainAnnouncement?: AnnouncementRecord[];
 	INFO: TrafikverketInfo;
 }
 
@@ -61,7 +38,5 @@ export interface TrafikverketResponse {
 
 export interface DatabaseStats {
 	positions: number;
-	announcements: number;
 	lastPosition?: string;
-	lastAnnouncement?: string;
 }

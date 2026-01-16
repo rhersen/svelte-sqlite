@@ -11,7 +11,6 @@ const initializeApp = async () => {
 	db.initialize();
 	// Start background jobs
 	streams.connectPosition();
-	streams.connectAnnouncement();
 	cleanup.startJob();
 	console.log('App initialized.');
 };

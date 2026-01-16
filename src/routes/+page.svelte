@@ -8,7 +8,7 @@
 	let { data }: Props = $props();
 
 	let stats = $derived(data.stats);
-	let hasData = $derived(stats && (stats.positions > 0 || stats.announcements > 0));
+	let hasData = $derived(stats && stats.positions > 0);
 
 	function formatDate(dateString: string | null): string {
 		if (!dateString) return 'Never';
@@ -30,12 +30,6 @@
 				<div class="stat-value">{stats.positions}</div>
 				<div class="stat-detail">Last: {formatDate(stats.lastPosition)}</div>
 			</div>
-
-			<div class="stat-card">
-				<div class="stat-label">Total Announcements</div>
-				<div class="stat-value">{stats.announcements}</div>
-				<div class="stat-detail">Last: {formatDate(stats.lastAnnouncement)}</div>
-			</div>
 		</div>
 
 		{#if !hasData}
@@ -55,14 +49,6 @@
 				<li>
 					<code>GET /api/positions/[train]</code> - Positions for specific train (with optional
 					<code>hours</code> query param)
-				</li>
-				<li>
-					<code>GET /api/announcements</code> - All announcements (with optional <code>limit</code> query
-					param)
-				</li>
-				<li>
-					<code>GET /api/announcements/[train]</code> - Announcements for specific train (with
-					optional <code>hours</code> query param)
 				</li>
 			</ul>
 		</div>
