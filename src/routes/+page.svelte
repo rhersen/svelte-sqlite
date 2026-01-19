@@ -47,8 +47,7 @@
 					<code>GET /api/positions</code> - All positions (with optional <code>limit</code> query param)
 				</li>
 				<li>
-					<code>GET /api/positions/[train]</code> - Positions for specific train (with optional
-					<code>hours</code> query param)
+					<code>GET /api/positions/[train]/[date]</code> - Positions for specific train on a given date
 				</li>
 			</ul>
 		</div>

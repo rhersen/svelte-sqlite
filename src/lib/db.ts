@@ -65,7 +65,7 @@ export function savePosition(position: PositionRecord): void {
   `
 	).run(
 		position.Train.OperationalTrainNumber,
-		position.Train.OperationalTrainDepartureDate,
+		position.Train.OperationalTrainDepartureDate.substring(0, 10),
 		position.Train.JourneyPlanNumber || null,
 		position.Train.JourneyPlanDepartureDate || null,
 		position.Train.AdvertisedTrainNumber || null,
@@ -82,18 +82,17 @@ export function savePosition(position: PositionRecord): void {
 
 export function getPositionsByTrainNumber(
 	trainNumber: string,
-	hoursBack: number = 20
+	date: string
 ): Record<string, unknown>[] {
-	const cutoff = Date.now() - hoursBack * 60 * 60 * 1000;
 	return db
 		.prepare(
 			`
       SELECT * FROM positions
-      WHERE operational_train_number = ? AND created_at > ?
+      WHERE operational_train_number = ? AND operational_train_departure_date = ?
       ORDER BY created_at DESC
     `
 		)
-		.all(trainNumber, cutoff) as Record<string, unknown>[];
+		.all(trainNumber, date) as Record<string, unknown>[];
 }
 
 export function getPositionsByLimit(limit: number = 100): Record<string, unknown>[] {
@@ -103,7 +102,7 @@ export function getPositionsByLimit(limit: number = 100): Record<string, unknown
 		.all(safeLimit) as Record<string, unknown>[];
 }
 
-export function cleanup(hoursToKeep: number = 20): number {
+export function cleanup(hoursToKeep: number = 50): number {
 	const cutoff = Date.now() - hoursToKeep * 60 * 60 * 1000;
 
 	const posChanges = db.prepare(`DELETE FROM positions WHERE created_at < ?`).run(cutoff);
