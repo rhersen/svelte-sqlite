@@ -1,11 +1,11 @@
 import { json } from '@sveltejs/kit';
-import { getPositionsByLimit } from '$lib/db';
+import { getPositionsBySpeed } from '$lib/db';
 
 export const GET = async ({ url }) => {
 	try {
-		const limit = parseInt(url.searchParams.get('limit') || '100');
+		const speed = parseFloat(url.searchParams.get('speed') || '2');
 
-		return json(getPositionsByLimit(limit));
+		return json(getPositionsBySpeed(speed));
 	} catch (error) {
 		console.error(error);
 		return json({ error: 'Failed to fetch positions' }, { status: 500 });

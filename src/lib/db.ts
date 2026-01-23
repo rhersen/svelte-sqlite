@@ -95,11 +95,10 @@ export function getPositionsByTrainNumber(
 		.all(trainNumber, date) as Record<string, unknown>[];
 }
 
-export function getPositionsByLimit(limit: number = 100): Record<string, unknown>[] {
-	const safeLimit = Math.min(limit, 1000);
+export function getPositionsBySpeed(minSpeed: number = 0): Record<string, unknown>[] {
 	return db
-		.prepare('SELECT * FROM positions ORDER BY created_at DESC LIMIT ?')
-		.all(safeLimit) as Record<string, unknown>[];
+		.prepare('SELECT * FROM positions WHERE speed >= ? ORDER BY created_at DESC')
+		.all(minSpeed) as Record<string, unknown>[];
 }
 
 export function cleanup(hoursToKeep: number = 50): number {
