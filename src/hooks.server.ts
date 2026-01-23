@@ -34,6 +34,23 @@ process.on('SIGINT', () => {
 
 // This runs on every request
 export const handle: Handle = async ({ event, resolve }) => {
-	// Middleware code here (optional)
-	return await resolve(event);
+	// Add CORS headers for GET requests only
+	if (event.request.method === 'OPTIONS') {
+		return new Response(null, {
+			headers: {
+				'Access-Control-Allow-Origin': '*',
+				'Access-Control-Allow-Methods': 'GET',
+				'Access-Control-Allow-Headers': 'Content-Type'
+			}
+		});
+	}
+
+	const response = await resolve(event);
+
+	// Add CORS headers to all responses
+	response.headers.set('Access-Control-Allow-Origin', '*');
+	response.headers.set('Access-Control-Allow-Methods', 'GET');
+	response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
+
+	return response;
 };
