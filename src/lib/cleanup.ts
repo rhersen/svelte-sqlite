@@ -2,7 +2,7 @@ import * as db from './db';
 
 let cleanupInterval: NodeJS.Timeout | null = null;
 
-export function startJob(intervalMs: number = 90 * 60 * 1000): void {
+export function startJob(intervalMs: number = 60 * 60 * 1000): void {
 	// Run cleanup every hour (3600000 ms) by default
 	cleanupInterval = setInterval(() => {
 		try {
