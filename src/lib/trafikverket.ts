@@ -12,6 +12,7 @@ const headers = {
 };
 
 const minutes = 6e4;
+const hours = 60 * minutes;
 
 export function buildPositionQuery(): string {
 	const since = new Date(Date.now() - 8 * minutes).toISOString();
@@ -28,6 +29,31 @@ export function buildPositionQuery(): string {
     <INCLUDE>Speed</INCLUDE>
     <INCLUDE>TimeStamp</INCLUDE>
     <INCLUDE>Train</INCLUDE>
+  </QUERY>
+</REQUEST>`;
+}
+
+export function buildAnnouncementQuery(): string {
+	const since = new Date(Date.now() - 50 * hours).toISOString();
+	return `
+<REQUEST>
+  <LOGIN authenticationkey='${TRAFIKVERKET_API_KEY}' />
+  <QUERY objecttype='TrainAnnouncement' orderby='AdvertisedTimeAtLocation' sseurl='true' schemaversion='1.6'>
+    <FILTER>
+      <LIKE name='AdvertisedTrainIdent' value='/^(?:2[2-9]\\d\\d|12[89]\\d\\d|52[2-7]\\d\\d)$/' />
+      <GT name='TimeAtLocationWithSeconds' value='${since}'/>
+      <EXISTS name='ToLocation' value='true' />
+    </FILTER>
+    <INCLUDE>ActivityType</INCLUDE>
+    <INCLUDE>AdvertisedTimeAtLocation</INCLUDE>
+    <INCLUDE>AdvertisedTrainIdent</INCLUDE>
+    <INCLUDE>FromLocation</INCLUDE>
+    <INCLUDE>LocationSignature</INCLUDE>
+    <INCLUDE>ProductInformation</INCLUDE>
+    <INCLUDE>ScheduledDepartureDateTime</INCLUDE>
+    <INCLUDE>TimeAtLocationWithSeconds</INCLUDE>
+    <INCLUDE>ToLocation</INCLUDE>
+    <INCLUDE>TrackAtLocation</INCLUDE>
   </QUERY>
 </REQUEST>`;
 }
