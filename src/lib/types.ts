@@ -40,3 +40,59 @@ export interface DatabaseStats {
 	positions: number;
 	lastPosition?: string;
 }
+
+export interface StationGeometry {
+	SWEREF99TM?: string;
+	WGS84?: string;
+}
+
+export interface TrainStation {
+	LocationSignature: string;
+	Advertised?: boolean;
+	AdvertisedLocationName?: string;
+	AdvertisedShortLocationName?: string;
+	PrimaryLocationCode?: string;
+	CountryCode?: string;
+	CountyNo?: number[];
+	Deleted?: boolean;
+	Geometry?: StationGeometry;
+	PlatformLine?: string[];
+	Prognosticated?: boolean;
+	OfficialLocationName?: string;
+	ModifiedTime?: string;
+}
+
+export interface TrafikverketError {
+	SOURCE?: string;
+	MESSAGE?: string;
+}
+
+export interface TrafikverketLastModified {
+	datetime?: string;
+}
+
+export interface TrafikverketEvalResult {
+	[key: string]: unknown;
+}
+
+export interface TrafikverketInfoExtended {
+	LASTMODIFIED?: TrafikverketLastModified;
+	LASTCHANGEID?: string;
+	EVALRESULT?: TrafikverketEvalResult[];
+	SSEURL?: string;
+}
+
+export interface TrafikverketStationResultItem {
+	TrainStation?: TrainStation[];
+	ERROR?: TrafikverketError;
+	INFO?: TrafikverketInfoExtended;
+	id?: string;
+}
+
+export interface TrafikverketStationResponseData {
+	RESULT: TrafikverketStationResultItem[];
+}
+
+export interface TrafikverketStationResponse {
+	RESPONSE: TrafikverketStationResponseData;
+}

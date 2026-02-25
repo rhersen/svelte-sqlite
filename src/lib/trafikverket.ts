@@ -58,6 +58,15 @@ export function buildAnnouncementQuery(): string {
 </REQUEST>`;
 }
 
+export function buildStationQuery(): string {
+	return `
+<REQUEST>
+  <LOGIN authenticationkey='${TRAFIKVERKET_API_KEY}' />
+  <QUERY objecttype='TrainStation' namespace='rail.infrastructure' schemaversion='1.5'>
+  </QUERY>
+</REQUEST>`;
+}
+
 export async function fetchTrafikverket(body: string): Promise<TrafikverketResponse> {
 	const response = await fetch('https://api.trafikinfo.trafikverket.se/v2/data.json', {
 		method: 'POST',
